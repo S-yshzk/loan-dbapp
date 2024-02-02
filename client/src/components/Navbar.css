@@ -1,0 +1,18 @@
+nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color:rgb(208, 123, 11);
+    height: 50px;
+    gap: 80px;
+}
+
+nav a{
+    text-decoration: none;
+    color: aliceblue;
+}
+
+nav a:hover {
+    color:cadetblue;
+    transition: all 0.3s;
+}
