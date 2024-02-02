@@ -37,7 +37,7 @@ const CreateLoan = () => {
                                 "repayDate": repayDate.format("YYYY-MM-DD")
                             }
                             const res = await postLoan(loan);
-                            console.log(res);
+                            console.log(loan);
                         } else {
                             alert("対象の人物がいません、新規人物の場合は「人の追加」で追加してください")
                         }

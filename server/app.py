@@ -47,7 +47,7 @@ def getPersonCount():
 def postPerson():
     content = request.get_json()
     # JSONデータから登録人数を取得して新しい人物IDを生成    
-    print(content)
+    print(content["名前"])
     try:
         sql = '''
         INSERT INTO 人物データ (名前, 人物情報) 
@@ -67,7 +67,6 @@ def postPerson():
 @app.route("/loan", methods=["post"])
 def postLoan():
     content = request.get_json()
-    print(content)
     sql = f'''
     insert into 立て替えデータ (立て替え情報, 人物ID, 立て替え金額, 立て替え日, 返済予定日, 返済済み)
     values (%s, %s, %s, %s, %s, false);
@@ -87,7 +86,8 @@ def postLoan():
 @app.route("/loan", methods=["get"])
 def getLoan():
     sql = '''
-    SELECT * from 立て替えデータ;
+    SELECT * FROM 立て替えデータ
+    LEFT JOIN 人物データ ON 立て替えデータ.人物ID = 人物データ.人物ID;
     '''
     cursor = connection.cursor()
     cursor.execute(sql)
@@ -102,7 +102,25 @@ def getLoan():
             "立て替え日": result[3],
             "返済予定日": result[4],
             "返済済み" : result[5],
-            "立て替え情報": result[6]
+            "立て替え情報": result[6],
+            "名前": result[8],
         }
         person_list.append(person_data)
     return jsonify(person_list)
+
+
+@app.route("/check", methods=["post"])
+def postCheck():
+    content = request.get_json()
+    print(content["返済状態"])
+    sql = '''
+    UPDATE 立て替えデータ SET 返済済み=%s WHERE 立て替えID = %s;
+    '''
+    try:
+        connection.execute(sql, content["返済状態"], int(content["立て替えID"]))
+    except Exception:
+        connection.rollback()
+        return {"masseage":"失敗"}
+    else:
+        connection.commit()
+        return {"masseage":"成功"}

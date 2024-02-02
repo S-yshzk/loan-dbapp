@@ -5,18 +5,33 @@ const Person = () => {
     const [personData, setPersonData] = useState([]);
     useEffect(() => {
         getPerson()
-        .then((res) => setPersonData(res))
-        .then(console.log(personData));
+            .then((res) => setPersonData(res))
+            .then(console.log(personData));
     }, [])
-    return(
+    return (
         <div>
-            <Navbar/>
+            <Navbar />
             <h1>人物一覧</h1>
-            {personData.map((item, index) => {
-                return(
-                    <li key={index}>{item.名前}</li>
-                )
-            })}
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">名前</th>
+                        <th scope="col">情報</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {personData.map((item, index) => {
+                        return (
+                            <tr key={index}>
+                                <td>{item.名前}</td>
+                                <td>{item.人物情報}</td>
+
+                            </tr>
+                        )
+                    })}
+                </tbody>
+
+            </table>
         </div>
     )
 }

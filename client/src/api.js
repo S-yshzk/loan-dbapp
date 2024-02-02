@@ -40,3 +40,13 @@ export function getLoan() {
     return request("/loan")
 }
 
+export function postCheck(check) {
+    return request("/check", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(check),
+    });
+}
+
