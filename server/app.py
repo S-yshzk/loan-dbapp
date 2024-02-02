@@ -46,21 +46,63 @@ def getPersonCount():
 @app.route("/person", methods=["post"])
 def postPerson():
     content = request.get_json()
-    # getPersonCount()の結果をJSONデータとして取得
-    count_data = getPersonCount().get_json()
-    
-    # JSONデータから登録人数を取得して新しい人物IDを生成
-    id = count_data["登録人数"] + 1
-    
+    # JSONデータから登録人数を取得して新しい人物IDを生成    
+    print(content)
     try:
-        sql = f'''
-        INSERT INTO 人物データ (人物ID, 名前, 人物情報) 
-        VALUES ({id}, '{content['名前']}', '{content['人物情報']}');
+        sql = '''
+        INSERT INTO 人物データ (名前, 人物情報) 
+        VALUES (%s, %s);
         '''
-        connection.execute(sql)
+        # データをタプルで指定
+        data = (content['名前'], content['人物情報'])
+        connection.execute(sql, data)
     except Exception:
         connection.rollback()
     else:
         connection.commit()
     
     return getPersonCount()
+
+
+@app.route("/loan", methods=["post"])
+def postLoan():
+    content = request.get_json()
+    print(content)
+    sql = f'''
+    insert into 立て替えデータ (立て替え情報, 人物ID, 立て替え金額, 立て替え日, 返済予定日, 返済済み)
+    values (%s, %s, %s, %s, %s, false);
+    '''
+    data = (content['info'], content['人物id'], content['price'], content['date'], content['repayDate'])
+    try:
+        connection.execute(sql, data)
+    except Exception:
+        connection.rollback()
+        return {"masseage":"失敗"}
+    else:
+        connection.commit()
+        return {"masseage":"成功"}
+
+
+    
+@app.route("/loan", methods=["get"])
+def getLoan():
+    sql = '''
+    SELECT * from 立て替えデータ;
+    '''
+    cursor = connection.cursor()
+    cursor.execute(sql)
+    results = cursor.fetchall()
+
+    person_list = []
+    for result in results:
+        person_data = {
+            "立て替えID": result[0], 
+            "人物ID": result[1],
+            "立て替え金額": result[2],
+            "立て替え日": result[3],
+            "返済予定日": result[4],
+            "返済済み" : result[5],
+            "立て替え情報": result[6]
+        }
+        person_list.append(person_data)
+    return jsonify(person_list)

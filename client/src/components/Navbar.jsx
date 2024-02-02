@@ -3,8 +3,8 @@ import "./Navbar.css";
 const Navbar = () => {
     return (
         <nav>
-            <Link to="/Home">ホーム</Link>
-            <Link to="/createpost">お金を立て替える</Link>
+            <Link to="/">ホーム</Link>
+            <Link to="/loan">立て替え一覧</Link>
             <Link to="/person">人物一覧</Link>
             <Link to="/createperson">人の追加</Link>
         </nav>

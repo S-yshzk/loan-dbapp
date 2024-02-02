@@ -26,3 +26,17 @@ export function getPersonCount() {
     return request("/personcount")
 }
 
+export function postLoan(loan) {
+    return request("/loan", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(loan),
+    });
+}
+
+export function getLoan() {
+    return request("/loan")
+}
+
